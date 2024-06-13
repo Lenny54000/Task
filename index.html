@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste de Tâches avec Barre de Progression</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .task-text {
+            flex-grow: 1;
+            margin-right: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        .task-buttons {
+            flex-shrink: 0;
+        }
+        .task-input {
+            width: calc(100% - 80px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .add-button {
+            width: 80px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .add-button:hover {
+            background-color: #45a049;
+        }
+        .progress-bar {
+            margin-top: 20px;
+            height: 30px;
+            background-color: #ddd;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0;
+            transition: width 0.3s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 15px;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Liste de Tâches</h1>
+
+        <ul class="task-list" id="task-list">
+            <!-- Liste des tâches ajoutées dynamiquement -->
+        </ul>
+
+        <div>
+            <input type="text" id="new-task" class="task-input" placeholder="Ajouter une nouvelle tâche...">
+            <button onclick="addTask()" class="add-button">Ajouter</button>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="progress" style="width: 0;"></div>
+            <div class="progress-text" id="progress-text">0%</div>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour ajouter une nouvelle tâche à la liste
+        function addTask() {
+            var taskInput = document.getElementById("new-task");
+            var taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                var taskList = document.getElementById("task-list");
+                var newTask = document.createElement("li");
+                newTask.classList.add("task-item");
+                newTask.innerHTML = `
+                    <span class="task-text">${taskText}</span>
+                    <div class="task-buttons">
+                        <button class="complete-button" onclick="completeTask(this)">Terminé</button>
+                        <button class="delete-button" onclick="deleteTask(this)">Supprimer</button>
+                    </div>
+                `;
+                taskList.appendChild(newTask);
+                taskInput.value = "";
+
+                updateProgressBar();
+            }
+        }
+
+        // Fonction pour marquer une tâche comme complétée
+        function completeTask(button) {
+            var taskItem = button.closest(".task-item");
+            var taskText = taskItem.querySelector(".task-text");
+
+            taskText.classList.toggle("complete");
+            if (button.textContent === "Terminé") {
+                button.textContent = "Défaire";
+            } else {
+                button.textContent = "Terminé";
+            }
+
+            updateProgressBar();
+        }
+
+        // Fonction pour supprimer une tâche
+        function deleteTask(button) {
+            var taskItem = button.closest(".task-item");
+            taskItem.remove();
+
+            updateProgressBar();
+        }
+
+        // Fonction pour mettre à jour la barre de progression
+        function updateProgressBar() {
+            var totalTasks = document.querySelectorAll(".task-item").length;
+            var completedTasks = document.querySelectorAll(".task-item .complete").length;
+
+            var progress = (completedTasks / totalTasks) * 100;
+            progress = isNaN(progress) ? 0 : progress;
+
+            var progressBar = document.getElementById("progress");
+            progressBar.style.width = progress + "%";
+
+            var progressText = document.getElementById("progress-text");
+            progressText.textContent = progress.toFixed(0) + "%";
+        }
+    </script>
+</body>
+</html>

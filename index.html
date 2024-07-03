@@ -118,6 +118,39 @@
     </div>
 
     <script>
+        // Charger les tâches sauvegardées au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTasks();
+            updateProgressBar();
+        });
+
+        // Enregistrer les tâches dans le localStorage
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(Array.from(document.querySelectorAll('.task-item')).map(task => ({
+                textContent: task.querySelector('.task-text').textContent,
+                complete: task.querySelector('.complete-button').textContent === 'Défaire',
+            }))));
+        }
+
+        // Charger les tâches depuis le localStorage
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks'));
+            if (tasks) {
+                tasks.forEach(task => {
+                    const newTask = document.createElement('li');
+                    newTask.classList.add('task-item');
+                    newTask.innerHTML = `
+                        <span class="task-text">${task.textContent}</span>
+                        <div class="task-buttons">
+                            <button class="complete-button" onclick="completeTask(this)">${task.complete ? 'Défaire' : 'Terminé'}</button>
+                            <button class="delete-button" onclick="deleteTask(this)">Supprimer</button>
+                        </div>
+                    `;
+                    document.getElementById('task-list').appendChild(newTask);
+                });
+            }
+        }
+
         // Fonction pour ajouter une nouvelle tâche à la liste
         function addTask() {
             var taskInput = document.getElementById("new-task");
@@ -137,6 +170,7 @@
                 taskList.appendChild(newTask);
                 taskInput.value = "";
 
+                saveTasks(); // Enregistrer les tâches après chaque modification
                 updateProgressBar();
             }
         }
@@ -153,6 +187,7 @@
                 button.textContent = "Terminé";
             }
 
+            saveTasks(); // Enregistrer les tâches après chaque modification
             updateProgressBar();
         }
 
@@ -161,6 +196,7 @@
             var taskItem = button.closest(".task-item");
             taskItem.remove();
 
+            saveTasks(); // Enregistrer les tâches après chaque modification
             updateProgressBar();
         }
 

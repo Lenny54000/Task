@@ -128,7 +128,7 @@
         function saveTasks() {
             localStorage.setItem('tasks', JSON.stringify(Array.from(document.querySelectorAll('.task-item')).map(task => ({
                 textContent: task.querySelector('.task-text').textContent,
-                complete: task.querySelector('.complete-button').textContent === 'Défaire',
+                complete: task.querySelector('.complete-button').textContent === 'Terminer',
             }))));
         }
 
@@ -140,9 +140,9 @@
                     const newTask = document.createElement('li');
                     newTask.classList.add('task-item');
                     newTask.innerHTML = `
-                        <span class="task-text">${task.textContent}</span>
+                        <span class="task-text ${task.complete ? 'complete' : ''}">${task.textContent}</span>
                         <div class="task-buttons">
-                            <button class="complete-button" onclick="completeTask(this)">${task.complete ? 'Défaire' : 'Terminé'}</button>
+                            <button class="complete-button" onclick="completeTask(this)">${task.complete ? 'Fini' : 'Terminer'}</button>
                             <button class="delete-button" onclick="deleteTask(this)">Supprimer</button>
                         </div>
                     `;
@@ -163,7 +163,7 @@
                 newTask.innerHTML = `
                     <span class="task-text">${taskText}</span>
                     <div class="task-buttons">
-                        <button class="complete-button" onclick="completeTask(this)">Terminé</button>
+                        <button class="complete-button" onclick="completeTask(this)">Terminer</button>
                         <button class="delete-button" onclick="deleteTask(this)">Supprimer</button>
                     </div>
                 `;
@@ -181,10 +181,10 @@
             var taskText = taskItem.querySelector(".task-text");
 
             taskText.classList.toggle("complete");
-            if (button.textContent === "Terminé") {
-                button.textContent = "Défaire";
+            if (button.textContent === "Terminer") {
+                button.textContent = "Fini";
             } else {
-                button.textContent = "Terminé";
+                button.textContent = "Terminer";
             }
 
             saveTasks(); // Enregistrer les tâches après chaque modification
